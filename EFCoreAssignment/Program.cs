@@ -52,7 +52,6 @@ static void InsertProductWithNewShop(AppDbContext dbContext)
         Shop = shop
     };
 
-    dbContext.Shops.Add(shop);
     dbContext.Products.Add(product);
     dbContext.SaveChanges();
 }
@@ -73,22 +72,21 @@ static void UpdateProduct(AppDbContext dbContext)
 
 static void DeleteProduct(AppDbContext dbContext)
 {
-    var product = new Product
-    {
-        Id = 8,
-        Name = "Lechon",
-        ShopId = 2
-    };
+    var product = dbContext.Products.FirstOrDefault(p => p.Id == 17);
 
-    dbContext.Products.Remove(product);
-    dbContext.SaveChanges();
+    if (product != null)
+    {
+        dbContext.Products.Remove(product);
+        dbContext.SaveChanges();
+    }
 }
 
 static void DeleteProductByKey(AppDbContext dbContext)
 {
-    var productId = 14;
+    var productId = 15;
 
-    var product = dbContext.Products.SingleOrDefault(x => x.Id == productId);
+    var product = new Product { Id = productId };
+
     if (product != null)
     {
         dbContext.Products.Remove(product);
