@@ -1,38 +1,81 @@
-﻿namespace EFCoreAssignment.Data.Services
+﻿using EFCoreAssignment.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace EFCoreAssignment.Data.Services
 {
     public class ProductService : IProductService
     {
+        private readonly AppDbContext _appDbContext;
 
-        public ProductService() { }
+        public ProductService(AppDbContext appDbContext)
+        {
+            _appDbContext = appDbContext;
+        }
 
         public async Task<List<ProductDto>> GetProducts()
         {
-            // TODO get products
-            throw new NotImplementedException();
+            var products = await _appDbContext.Products.ToListAsync();
+            if (products == null)
+            {
+                return null;
+            }
+
+            var productsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.ShopId)).ToList();
+
+            return productsDto;
         }
 
         public async Task<ProductDto> GetProduct(int id)
         {
-            // TODO get product
-            throw new NotImplementedException();
+            var product = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                return null;
+            }
+
+            var productDto = new ProductDto(product.Id, product.Name, product.ShopId);
+
+            return productDto;
         }
 
         public async Task<int> CreateProduct(CreateProductDto productForCreation)
         {
-            // TODO create a product
-            throw new NotImplementedException();
+            var product = new Product
+            {
+                Name = productForCreation.Name,
+                ShopId = productForCreation.ShopId
+            };
+
+            _appDbContext.Products.Add(product);
+            await _appDbContext.SaveChangesAsync();
+
+            return product.Id;
         }
 
         public async Task UpdateProduct(UpdateProductDto productForUpdate)
         {
-            //TODO update a product
-            throw new NotImplementedException();
+            var product = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == productForUpdate.Id);
+            if (product == null)
+            {
+                throw new ArgumentException("Product not found.");
+            }
+
+            product.Name = productForUpdate.Name;
+            product.ShopId = productForUpdate.ShopId;
+
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteProduct(int id)
         {
-            //TODO delete a product
-            throw new NotImplementedException();
+            var product = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                throw new ArgumentException("Product not found.");
+            }
+
+            _appDbContext.Products.Remove(product);
+            await _appDbContext.SaveChangesAsync();
         }
 
     }
