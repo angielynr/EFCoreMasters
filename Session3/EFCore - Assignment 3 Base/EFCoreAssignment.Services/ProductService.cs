@@ -55,10 +55,6 @@ namespace EFCoreAssignment.Data.Services
         public async Task UpdateProduct(UpdateProductDto productForUpdate)
         {
             var product = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == productForUpdate.Id);
-            if (product == null)
-            {
-                throw new ArgumentException("Product not found.");
-            }
 
             product.Name = productForUpdate.Name;
             product.ShopId = productForUpdate.ShopId;
@@ -69,10 +65,6 @@ namespace EFCoreAssignment.Data.Services
         public async Task DeleteProduct(int id)
         {
             var product = await _appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product == null)
-            {
-                throw new ArgumentException("Product not found.");
-            }
 
             _appDbContext.Products.Remove(product);
             await _appDbContext.SaveChangesAsync();
