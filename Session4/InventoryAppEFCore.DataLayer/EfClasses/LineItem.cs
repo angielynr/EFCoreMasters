@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace InventoryAppEFCore.DataLayer.EfClasses
 {
     public class LineItem
     {
+        [Key]
         public int LineItemId { get; set; }
         public short NumOfProducts { get; set; }
         public decimal ProductPrice { get; set; }
