@@ -14,6 +14,9 @@ namespace InventoryAppEFCore.DataLayer.EfClasses
         public string PromotinalText { get; set; }
 
         //relationship---
+        [ForeignKey("Product")]
         public int ProductId { get; set; }
+
+        public Product Product { get; set; } //1:1 relationship with PriceOffer
     }
 }

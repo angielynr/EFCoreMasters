@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryAppEFCore.DataLayer.EfClasses
 {
@@ -10,9 +11,11 @@ namespace InventoryAppEFCore.DataLayer.EfClasses
         public decimal ProductPrice { get; set; }
 
         //relationships
+        [ForeignKey("Order")]
         public int OrderId { get; set; }
+
+        public Order Order { get; set; } // 1:Many relationship with Order
         public int ProductId { get; set; }
         public Product SelectedProduct { get; set; }
-
     }
 }

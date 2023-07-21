@@ -29,6 +29,24 @@ namespace InventoryAppEFCore.DataLayer
                 entity.Property<DateTime>("LastUpdated");
             });
 
+            // many-to-many relationship between Product and Supplier
+            modelBuilder.Entity<Product>()
+            .HasMany(p => p.SuppliersLink)
+            .WithMany(s => s.ProductsLink)
+            .UsingEntity(j => j.ToTable("ProductSupplier"));
+
+            // one-to-one relationship between Product and PriceOffer
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Promotion)
+                .WithOne(po => po.Product)
+                .HasForeignKey<PriceOffer>(po => po.ProductId);
+
+            // one-to-many relationship between Order and LineItem
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.LineItems)
+                .WithOne(li => li.Order)
+                .HasForeignKey(li => li.OrderId);
+
             modelBuilder.Entity<Supplier>(entity =>
             {
                 entity.HasKey(s => s.SupplierId);
