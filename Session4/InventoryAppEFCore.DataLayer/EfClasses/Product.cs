@@ -12,7 +12,7 @@ namespace InventoryAppEFCore.DataLayer.EfClasses
         public string Name { get; set; }
 
         //relationships---
-        public PriceOffer Promotion { get; set; }
+        public PriceOffer Promotion { get; set; } //1:1 relationship with PriceOffer
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Tag> Tags { get; set; }
 

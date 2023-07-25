@@ -10,7 +10,7 @@ namespace InventoryAppEFCore.DataLayer.EfClasses
         public DateTime DateOrderedUtc { get; set; }
 
         //relationships
-        public ICollection<LineItem> LineItems { get; set; }
+        public ICollection<LineItem> LineItems { get; set; } // 1:Many relationship with LineItem
 
         public OrderStatus Status { get; set; }
 
