@@ -67,6 +67,8 @@ namespace InventoryAppEFCore.DataLayer
                 entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
             });
 
+            modelBuilder.Entity<Client>().HasQueryFilter(c => !c.IsDeleted); //Global Query Filter
+
             modelBuilder.Entity<PriceOffer>().HasKey(po => po.PriceOfferId);
 
             var utcConverter = new ValueConverter<DateTime, DateTime>(
