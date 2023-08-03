@@ -4,6 +4,7 @@ using InventoryAppEFCore.DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryAppEFCore.DataLayer.Migrations
 {
     [DbContext(typeof(InventoryAppEfCoreContext))]
-    partial class InventoryAppEfCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230726121652_SeedClientTableAndCreateSQLView")]
+    partial class SeedClientTableAndCreateSQLView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +42,7 @@ namespace InventoryAppEFCore.DataLayer.Migrations
 
                     b.HasKey("ClientId");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Client", (string)null);
 
                     b.HasData(
                         new
@@ -238,13 +240,9 @@ namespace InventoryAppEFCore.DataLayer.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"), 1L, 1);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ClientId");
 
                     b.ToView("ClientFilterView");
                 });

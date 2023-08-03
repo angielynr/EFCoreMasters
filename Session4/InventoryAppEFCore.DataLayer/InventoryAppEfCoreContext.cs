@@ -1,4 +1,5 @@
 ﻿using InventoryAppEFCore.DataLayer.EfClasses;
+using InventoryAppEFCore.DataLayer.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -19,9 +20,21 @@ namespace InventoryAppEFCore.DataLayer
         public DbSet<Client> Clients { get; set; }
         public DbSet<PriceOffer> PriceOffers { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<ClientView> clientViews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Client>().HasData(
+               new { ClientId = 1, Name = "Client1", IsDeleted = false },
+               new { ClientId = 2, Name = "Client2", IsDeleted = false },
+               new { ClientId = 3, Name = "Client3", IsDeleted = false },
+               new { ClientId = 4, Name = "Client4", IsDeleted = true },
+               new { ClientId = 5, Name = "Client5", IsDeleted = true });
+
+            modelBuilder.Entity<Client>().ToTable("Clients");
+            modelBuilder.Entity<ClientView>().ToView("ClientFilterView").HasKey(c => c.ClientId);
+
+
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasKey(p => p.ProductId);
