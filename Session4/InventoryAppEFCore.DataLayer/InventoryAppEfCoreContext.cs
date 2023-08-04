@@ -22,6 +22,9 @@ namespace InventoryAppEFCore.DataLayer
         public DbSet<Order> Orders { get; set; }
         public DbSet<ClientView> clientViews { get; set; }
 
+        [DbFunction]
+        public double? AverageVotes(int clientId) => null;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>().HasData(
@@ -33,6 +36,24 @@ namespace InventoryAppEFCore.DataLayer
 
             modelBuilder.Entity<Client>().ToTable("Clients");
             modelBuilder.Entity<ClientView>().ToView("ClientFilterView").HasKey(c => c.ClientId);
+
+            // HasDefaultValue & HasDefaultValueSql
+            modelBuilder.Entity<Client>()
+                .Property(p => p.DateOfBirth)
+                .HasDefaultValue(new DateTime(2023, 1, 1));
+
+            modelBuilder.Entity<Client>()
+                .Property(p => p.CreatedOn)
+                .HasDefaultValueSql("getutcdate()");
+
+            // Computer Column
+            modelBuilder.Entity<Client>()
+                .Property(p => p.NameAndCreatedOn)
+                .HasComputedColumnSql("[Name] + ',' + [CreatedOn]", stored: true);
+
+            modelBuilder.Entity<Client>()
+                .Property(p => p.ComputedBirthYear)
+                .HasComputedColumnSql("DatePart(yyyy, [DateOfBirth])");
 
 
             modelBuilder.Entity<Product>(entity =>
