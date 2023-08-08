@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using InventoryAppEFCore.API.DTO;
-using InventoryAppEFCore.Services;
+using InventoryAppEFCore.DataLayer.EfClasses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryAppEFCore.API.Controllers
@@ -25,6 +25,23 @@ namespace InventoryAppEFCore.API.Controllers
             var clientDto = _mapper.Map<List<ClientDto>>(clients);
 
             return Ok(clientDto);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ClientDto>> CreateClient([FromBody] AddClientDto addClientDto)
+        {
+
+            try
+            {
+                var newClient = _mapper.Map<Client>(addClientDto);
+                var createdClient = await _clientService.AddClient(newClient);
+                var createdClientDto = _mapper.Map<ClientDto>(createdClient);
+                return Ok(createdClientDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating client.");
+            }
         }
     }
 }

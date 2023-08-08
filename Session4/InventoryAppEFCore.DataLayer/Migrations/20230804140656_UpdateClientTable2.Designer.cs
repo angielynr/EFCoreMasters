@@ -4,6 +4,7 @@ using InventoryAppEFCore.DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryAppEFCore.DataLayer.Migrations
 {
     [DbContext(typeof(InventoryAppEfCoreContext))]
-    partial class InventoryAppEfCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230804140656_UpdateClientTable2")]
+    partial class UpdateClientTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,11 +31,6 @@ namespace InventoryAppEFCore.DataLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClientId"), 1L, 1);
-
-                    b.Property<int>("BirthYear")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("int")
-                        .HasComputedColumnSql("DatePart(yyyy, [DateOfBirth])");
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
@@ -57,7 +54,12 @@ namespace InventoryAppEFCore.DataLayer.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("nvarchar(max)")
-                        .HasComputedColumnSql("[Name] + ',' + [BirthYear]", true);
+                        .HasComputedColumnSql("[Name] + ',' + [YearOfBirth]", true);
+
+                    b.Property<int>("YearOfBirth")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("int")
+                        .HasComputedColumnSql("DatePart(yyyy, [DateOfBirth])");
 
                     b.HasKey("ClientId");
 

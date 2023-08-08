@@ -9,6 +9,10 @@ namespace InventoryAppEFCore.API
         public AutoMapperProfile()
         {
             CreateMap<Client, ClientDto>();
+            CreateMap<ClientDto, Client>();
+            CreateMap<AddClientDto, Client>();
+
+
         }
 
     }

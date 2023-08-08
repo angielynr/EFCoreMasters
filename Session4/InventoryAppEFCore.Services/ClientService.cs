@@ -7,7 +7,8 @@ namespace InventoryAppEFCore.Services
     public class ClientService : IClientService
     {
         private readonly InventoryAppEfCoreContext _inventoryAppEfCoreContext;
-
+        /*        public const string UdfAverageVotes = nameof(UdfMethods.AverageVotes);
+        */
         public ClientService(InventoryAppEfCoreContext inventoryAppEfCoreContext)
         {
             _inventoryAppEfCoreContext = inventoryAppEfCoreContext;
@@ -15,14 +16,23 @@ namespace InventoryAppEFCore.Services
 
         public async Task<List<Client>> GetAllClients()
         {
-            var products = await _inventoryAppEfCoreContext.Clients.ToListAsync();
+            var clients = await _inventoryAppEfCoreContext.Clients.ToListAsync();
 
-            return products;
+            return clients;
+        }
+
+        public async Task<Client> AddClient(Client client)
+        {
+            var newClient = _inventoryAppEfCoreContext.Clients.Add(client);
+            await _inventoryAppEfCoreContext.SaveChangesAsync();
+            return client;
         }
     }
-
-    public interface IClientService
-    {
-        Task<List<Client>> GetAllClients();
-    }
 }
+
+public interface IClientService
+{
+    Task<List<Client>> GetAllClients();
+    Task<Client> AddClient(Client client);
+}
+
