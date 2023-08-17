@@ -3,11 +3,6 @@ using ExpenseTracker.Domain.Entities;
 using ExpenseTracker.Infrastructure.Services;
 using ExpenseTracker.Tests.Helper;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpenseTracker.Tests.Tests
 {
@@ -31,66 +26,86 @@ namespace ExpenseTracker.Tests.Tests
         [Fact]
         public void GetAllCategories_ShouldReturnAllCategories()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var categoryService = new CategoryService(context);
 
-            //Act
-            //3
-            //3
+            // Act
+            var categories = categoryService.GetAll();
 
-            //Assert
-            //4 Assert that there should be categories retrieved 
+            // Assert
+            categories.Should().NotBeNull();
+            categories.Should().NotBeEmpty();
         }
 
 
         [Fact]
         public void GetSingleCategory_ShouldReturnRequested()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
-            //Act
-            //3
-            //3
+            var categoryService = new CategoryService(context);
 
-            //Assert
-            //4 Assert that category returned is the one requested
+            var categoryIdToFetch = 1; // Replace with the actual CategoryId of an existing category
+
+            // Act
+            var category = categoryService.GetSingle(categoryIdToFetch);
+
+            // Assert
+            category.Should().NotBeNull();
+            category.CategoryId.Should().Be(categoryIdToFetch);
         }
 
         [Fact]
         public void AddCategory_ShouldSuccessfullyAddCategory()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var categoryService = new CategoryService(context);
 
-            //Act
-            //3
-            //3
-            
+            var newCategory = new Category
+            {
+                Name = "Category2",
+                Description = "Category2"
+            };
 
-            //Assert
-            //4 Assert that category was added
+            // Act
+            categoryService.Add(newCategory);
+            var addedCategory = categoryService.GetSingle(newCategory.CategoryId);
+
+            // Assert
+            addedCategory.Should().NotBeNull();
+            addedCategory.Name.Should().Be(newCategory.Name);
         }
 
         [Fact]
         public void DeleteCategory_ShouldSuccessfullyDeleteCategory()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var categoryService = new CategoryService(context);
 
-            //Act
-            //3
-            //3
+            var categoryIdToDelete = 1;
 
-            //Assert
-            //4 Assert that category was deleted
+            // Act
+            var categoryToDelete = categoryService.GetSingle(categoryIdToDelete);
+            categoryService.Delete(categoryToDelete);
+            var deletedCategory = categoryService.GetSingle(categoryIdToDelete);
+
+            // Assert
+            deletedCategory.Should().BeNull();
         }
     }
 }

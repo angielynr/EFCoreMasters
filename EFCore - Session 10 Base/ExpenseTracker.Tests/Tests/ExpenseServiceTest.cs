@@ -3,25 +3,11 @@ using ExpenseTracker.Domain.Entities;
 using ExpenseTracker.Infrastructure.Services;
 using ExpenseTracker.Tests.Helper;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpenseTracker.Tests.Tests
 {
     public class ExpenseServiceTest
     {
-
-        //TODO
-        //Fill in the steps for every test
-        //1. Create a unique dbcontextoption 
-        //2. Setup a new database with fresh data for every test
-        //3. Test respective method in the ExpenseService.cs 
-        //4. Do atleast 1 assertion using fluent assertions
-
-        //GOAL: This test should run in parallel with CategoryServiceTest
 
         private readonly string _className;
         public ExpenseServiceTest()
@@ -33,79 +19,108 @@ namespace ExpenseTracker.Tests.Tests
         public void GetAllExpenses_ShouldReturnAllExpenses()
         {
             //Arrange
-            //1
-            //2
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var expenseService = new ExpenseService(context);
 
             //Act
-            //3
-            //3;
+            var expenses = expenseService.GetAll();
 
             //Assert
-            //4 Assert that there should be expenses retrieved 
+            expenses.Should().NotBeNull();
+            expenses.Count().Should().BeGreaterThan(0);
         }
 
         [Fact]
         public void GetAllOrderedByAmount_ExpensesShouldBeInAscendingOrder()
         {
-            //Arrange
-            //1
-            //2
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var expenseService = new ExpenseService(context);
 
-            //Act
-            //3
-            //3
+            // Act
+            var expenses = expenseService.GetAllOrderedByAmount();
 
-            //Assert
-            //4 Assert that expenses should be in ascending order
+            // Assert
+            expenses.Should().BeInAscendingOrder(e => e.ItemAmount);
         }
 
         [Fact]
         public void GetSingleExpense_ShouldReturnRequested()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
-            //Act
-            //3
-            //3
+            var expenseService = new ExpenseService(context);
 
-            //Assert
-            //4 Assert that expense returned is the one requested
+            // Act
+            var expenseId = 1;
+            var expense = expenseService.GetSingle(expenseId);
+
+            // Assert
+            expense.Should().NotBeNull();
+            expense.ExpenseId.Should().Be(expenseId);
         }
 
         [Fact]
         public void AddExpense_ShouldSuccessfullyAddExpense()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
 
+            var expenseService = new ExpenseService(context);
 
-            //Act
-            //3
-            //3
+            var newExpense = new Expense
+            {
+                Item = "Item3",
+                DatePurchased = DateTime.Now,
+                ItemAmount = 100,
+                Category = new Category
+                {
+                    Name = "Category3",
+                    Description = "Category3"
+                }
+            };
 
-            //Assert
-            //4 Assert that expense was added
+            // Act
+            expenseService.Add(newExpense);
+            var addedExpense = expenseService.GetSingle(newExpense.ExpenseId);
+
+            // Assert
+            addedExpense.Should().NotBeNull();
+            addedExpense.ExpenseId.Should().Be(newExpense.ExpenseId);
         }
 
         [Fact]
         public void DeleteExpense_ShouldSuccessfullyDeleteExpense()
         {
-            //Arrange
-            //1
-            //2
+            // Arrange
+            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
+            using var context = new ExpenseTrackerDBContext(dbContextOptions);
+            context.InitializeDBWithData();
+
+            var expenseService = new ExpenseService(context);
+
+            var expenseToDelete = new Expense
+            {
+                ExpenseId = 2,
+            };
 
 
-            //Act
-            //3
-            //3
+            // Act
+            expenseService.Delete(expenseToDelete);
+            var deletedExpense = expenseService.GetSingle(expenseToDelete.ExpenseId);
 
-            //Assert
-            //4 Assert that expense was deleted
+            // Assert
+            deletedExpense.Should().BeNull();
         }
     }
 }
