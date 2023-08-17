@@ -1,29 +1,26 @@
-﻿using ExpenseTracker.Data;
-using ExpenseTracker.Domain.Entities;
+﻿using ExpenseTracker.Domain.Entities;
 using ExpenseTracker.Infrastructure.Services;
-using ExpenseTracker.Tests.Helper;
+using ExpenseTracker.Tests.Fixture;
 using FluentAssertions;
 
 namespace ExpenseTracker.Tests.Tests
 {
-    public class ExpenseServiceTest
+    public class ExpenseServiceTest : IClassFixture<ExpenseFixture>
     {
+        private readonly ExpenseFixture _expense;
 
-        private readonly string _className;
-        public ExpenseServiceTest()
+        public ExpenseServiceTest(ExpenseFixture expense)
         {
-            _className = GetType().Name;
+            _expense = expense;
         }
 
         [Fact]
         public void GetAllExpenses_ShouldReturnAllExpenses()
         {
             //Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _expense.CreateContext();
 
-            var expenseService = new ExpenseService(context);
+            var expenseService = new ExpenseService(dbContextOptions);
 
             //Act
             var expenses = expenseService.GetAll();
@@ -36,11 +33,9 @@ namespace ExpenseTracker.Tests.Tests
         [Fact]
         public void GetAllOrderedByAmount_ExpensesShouldBeInAscendingOrder()
         {
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _expense.CreateContext();
 
-            var expenseService = new ExpenseService(context);
+            var expenseService = new ExpenseService(dbContextOptions);
 
             // Act
             var expenses = expenseService.GetAllOrderedByAmount();
@@ -53,11 +48,9 @@ namespace ExpenseTracker.Tests.Tests
         public void GetSingleExpense_ShouldReturnRequested()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _expense.CreateContext();
 
-            var expenseService = new ExpenseService(context);
+            var expenseService = new ExpenseService(dbContextOptions);
 
             // Act
             var expenseId = 1;
@@ -72,11 +65,9 @@ namespace ExpenseTracker.Tests.Tests
         public void AddExpense_ShouldSuccessfullyAddExpense()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _expense.CreateContext();
 
-            var expenseService = new ExpenseService(context);
+            var expenseService = new ExpenseService(dbContextOptions);
 
             var newExpense = new Expense
             {
@@ -103,11 +94,9 @@ namespace ExpenseTracker.Tests.Tests
         public void DeleteExpense_ShouldSuccessfullyDeleteExpense()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _expense.CreateContext();
 
-            var expenseService = new ExpenseService(context);
+            var expenseService = new ExpenseService(dbContextOptions);
 
             var expenseToDelete = new Expense
             {

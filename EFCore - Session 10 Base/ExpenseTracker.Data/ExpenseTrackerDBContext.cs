@@ -6,8 +6,6 @@ namespace ExpenseTracker.Data
 {
     public class ExpenseTrackerDBContext : DbContext
     {
-        //TODO: Setup DBContext for unit testing
-
         public ExpenseTrackerDBContext()
         {
 
@@ -32,7 +30,7 @@ namespace ExpenseTracker.Data
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            return builder.GetConnectionString("CustomTestDB");
+            return builder.GetConnectionString("Category");
         }
     }
 }

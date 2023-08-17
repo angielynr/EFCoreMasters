@@ -1,37 +1,26 @@
-﻿using ExpenseTracker.Data;
-using ExpenseTracker.Domain.Entities;
+﻿using ExpenseTracker.Domain.Entities;
 using ExpenseTracker.Infrastructure.Services;
-using ExpenseTracker.Tests.Helper;
+using ExpenseTracker.Tests.Fixture;
 using FluentAssertions;
 
 namespace ExpenseTracker.Tests.Tests
 {
-    public class CategoryServiceTest
+    public class CategoryServiceTest : IClassFixture<CategoryFixture>
     {
-        //TODO
-        //Fill in the steps for every test
-        //1. Create a unique dbcontextoption 
-        //2. Setup a new database with fresh data for every test
-        //3. Test respective method in the CategoryService.cs 
-        //4. Do atleast 1 assertion using fluent assertions
+        private readonly CategoryFixture _categoryFixture;
 
-        //GOAL: This test should run in parallel with ExpenseServiceTest
-
-        private readonly string _className;
-        public CategoryServiceTest()
+        public CategoryServiceTest(CategoryFixture categoryFixture)
         {
-            _className = GetType().Name;
+            _categoryFixture = categoryFixture;
         }
 
         [Fact]
         public void GetAllCategories_ShouldReturnAllCategories()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _categoryFixture.CreateContext();
 
-            var categoryService = new CategoryService(context);
+            var categoryService = new CategoryService(dbContextOptions);
 
             // Act
             var categories = categoryService.GetAll();
@@ -46,31 +35,28 @@ namespace ExpenseTracker.Tests.Tests
         public void GetSingleCategory_ShouldReturnRequested()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _categoryFixture.CreateContext();
 
-            var categoryService = new CategoryService(context);
+            var categoryService = new CategoryService(dbContextOptions);
 
-            var categoryIdToFetch = 1; // Replace with the actual CategoryId of an existing category
+            int categoryIdToFetch = 1;
+
+            var expectedResult = dbContextOptions.Categories.FirstOrDefault(a => a.CategoryId == categoryIdToFetch);
 
             // Act
             var category = categoryService.GetSingle(categoryIdToFetch);
 
             // Assert
-            category.Should().NotBeNull();
-            category.CategoryId.Should().Be(categoryIdToFetch);
+            category.Should().Be(expectedResult);
         }
 
         [Fact]
         public void AddCategory_ShouldSuccessfullyAddCategory()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _categoryFixture.CreateContext();
 
-            var categoryService = new CategoryService(context);
+            var categoryService = new CategoryService(dbContextOptions);
 
             var newCategory = new Category
             {
@@ -91,11 +77,9 @@ namespace ExpenseTracker.Tests.Tests
         public void DeleteCategory_ShouldSuccessfullyDeleteCategory()
         {
             // Arrange
-            var dbContextOptions = DBContextOptionsGenerator.CreateUniqueClassOptions<ExpenseTrackerDBContext>(_className);
-            using var context = new ExpenseTrackerDBContext(dbContextOptions);
-            context.InitializeDBWithData();
+            var dbContextOptions = _categoryFixture.CreateContext();
 
-            var categoryService = new CategoryService(context);
+            var categoryService = new CategoryService(dbContextOptions);
 
             var categoryIdToDelete = 1;
 
